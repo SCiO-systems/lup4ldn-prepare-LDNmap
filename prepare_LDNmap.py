@@ -30,9 +30,9 @@ def lambda_handler(event, context):
     
 
     #for local
-    # path_to_tmp = "/home/christos/Desktop/SCiO_Projects/lup4ldn/data/cropped_files/"
+    path_to_tmp = "/home/christos/Desktop/SCiO_Projects/lup4ldn/data/cropped_files/"
     #for aws
-    path_to_tmp = "/tmp/"
+    # path_to_tmp = "/tmp/"
 
     target_bucket = "lup4ldn-lambdas"
     object_name = project_id + "/cropped_land_degradation.tif"
@@ -95,7 +95,7 @@ def lambda_handler(event, context):
             intersect_area_array = np.where(intersect_area_array!=-32768,polygon["value"],0)
             
             
-            my_array += intersect_area_array
+            my_array = np.where(intersect_mask,intersect_area_array,my_array) 
             final_mask = np.logical_or(final_mask,intersect_mask)
         except Exception as e:
             print(e)
@@ -165,7 +165,7 @@ def lambda_handler(event, context):
 
 #%%
 # input_json = {
-#     "body" :"{\"project_id\":\"some_projectID\",\"ROI\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[8.731384277343748,36.32176422120382],[9.849243164062498,36.32176422120382],[9.849243164062498,36.71687068791304],[8.731384277343748,36.71687068791304],[8.731384277343748,36.32176422120382]]]}}]},\"polygons_list\":[{\"value\":1,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[9.59930419921875,36.2354121683998],[9.952239990234375,36.2354121683998],[9.952239990234375,36.46215855158897],[9.59930419921875,36.46215855158897],[9.59930419921875,36.2354121683998]]]}}]}},{\"value\":0,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[8.672332763671875,36.245380741380465],[9.012908935546875,36.245380741380465],[9.012908935546875,36.46988944681576],[8.672332763671875,36.46988944681576],[8.672332763671875,36.245380741380465]]]}}]}},{\"value\":-1,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[8.636627197265625,36.58465761247169],[9.01153564453125,36.58465761247169],[9.01153564453125,36.76639204454785],[8.636627197265625,36.76639204454785],[8.636627197265625,36.58465761247169]]]}}]}},{\"value\":1,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[9.111785888671875,36.86863488530103],[9.42352294921875,36.86863488530103],[9.42352294921875,37.06394430056685],[9.111785888671875,37.06394430056685],[9.111785888671875,36.86863488530103]]]}}]}}]}"
+#     "body" :"{\"project_id\":\"some_projectID\",\"ROI\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[8.731384277343748,36.32176422120382],[9.849243164062498,36.32176422120382],[9.849243164062498,36.71687068791304],[8.731384277343748,36.71687068791304],[8.731384277343748,36.32176422120382]]]}}]},\"polygons_list\":[{\"value\":1,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[9.59930419921875,36.2354121683998],[9.952239990234375,36.2354121683998],[9.952239990234375,36.46215855158897],[9.59930419921875,36.46215855158897],[9.59930419921875,36.2354121683998]]]}}]}},{\"value\":0,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[8.672332763671875,36.245380741380465],[9.012908935546875,36.245380741380465],[9.012908935546875,36.46988944681576],[8.672332763671875,36.46988944681576],[8.672332763671875,36.245380741380465]]]}}]}},{\"value\":-1,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[8.701171874999998,36.12789245231783],[9.070587158203125,36.12789245231783],[9.070587158203125,36.74548692469868],[8.701171874999998,36.74548692469868],[8.701171874999998,36.12789245231783]]]}}]}},{\"value\":1,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[9.111785888671875,36.86863488530103],[9.42352294921875,36.86863488530103],[9.42352294921875,37.06394430056685],[9.111785888671875,37.06394430056685],[9.111785888671875,36.86863488530103]]]}}]}}]}"
 # }
 
 # results = lambda_handler(input_json,1)
