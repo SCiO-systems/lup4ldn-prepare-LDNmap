@@ -30,9 +30,9 @@ def lambda_handler(event, context):
     
 
     #for local
-    path_to_tmp = "/home/christos/Desktop/SCiO_Projects/lup4ldn/data/cropped_files/"
+    # path_to_tmp = "/home/christos/Desktop/SCiO_Projects/lup4ldn/data/cropped_files/"
     #for aws
-    # path_to_tmp = "/tmp/"
+    path_to_tmp = "/tmp/"
 
     target_bucket = "lup4ldn-lambdas"
     object_name = project_id + "/cropped_land_degradation.tif"
