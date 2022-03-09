@@ -34,7 +34,7 @@ def lambda_handler(event, context):
     #for aws
     path_to_tmp = "/tmp/"
 
-    target_bucket = "lup4ldn-lambdas"
+    target_bucket = "lup4ldn-prod"
     object_name = project_id + "/cropped_land_degradation.tif"
     path_to_local_save_file = path_to_tmp + "tmp_file.tif"
     
@@ -136,7 +136,7 @@ def lambda_handler(event, context):
     
     save_arrays_to_tif(ldn_map_save_path, my_array,my_array_tif)
     
-    target_bucket = "lup4ldn-lambdas"
+    target_bucket = "lup4ldn-prod"
     object_name = project_id + "/" + "cropped_ldn_map.tif"
     
     # Upload the file
@@ -150,7 +150,7 @@ def lambda_handler(event, context):
             "body": json.dumps(e)
                 }
 
-    s3_lambda_path = "https://lup4ldn-lambdas.s3.eu-central-1.amazonaws.com/"
+    s3_lambda_path = "https://lup4ldn-prod.s3.us-east-2.amazonaws.com/"
     
     my_output = {
         "ldn_map" :  s3_lambda_path + object_name
@@ -159,14 +159,3 @@ def lambda_handler(event, context):
         "statusCode": 200,
         "body": json.dumps(my_output)
         }  
-
-
-
-
-#%%
-# input_json = {
-#     "body" :"{\"project_id\":\"some_projectID\",\"ROI\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[8.731384277343748,36.32176422120382],[9.849243164062498,36.32176422120382],[9.849243164062498,36.71687068791304],[8.731384277343748,36.71687068791304],[8.731384277343748,36.32176422120382]]]}}]},\"polygons_list\":[{\"value\":1,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[9.59930419921875,36.2354121683998],[9.952239990234375,36.2354121683998],[9.952239990234375,36.46215855158897],[9.59930419921875,36.46215855158897],[9.59930419921875,36.2354121683998]]]}}]}},{\"value\":0,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[8.672332763671875,36.245380741380465],[9.012908935546875,36.245380741380465],[9.012908935546875,36.46988944681576],[8.672332763671875,36.46988944681576],[8.672332763671875,36.245380741380465]]]}}]}},{\"value\":-1,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[8.701171874999998,36.12789245231783],[9.070587158203125,36.12789245231783],[9.070587158203125,36.74548692469868],[8.701171874999998,36.74548692469868],[8.701171874999998,36.12789245231783]]]}}]}},{\"value\":1,\"polygon\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[9.111785888671875,36.86863488530103],[9.42352294921875,36.86863488530103],[9.42352294921875,37.06394430056685],[9.111785888671875,37.06394430056685],[9.111785888671875,36.86863488530103]]]}}]}}]}"
-# }
-
-# results = lambda_handler(input_json,1)
-# print(results)
