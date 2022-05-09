@@ -28,9 +28,9 @@ def lambda_handler(event, context):
         print("Input JSON field have an error.")
         raise(e)
     
+
     #for aws
     path_to_tmp = "/tmp/"
-
 
     def get_bucket_from_URL(url):
         part1 = url.split(".s3.")[0]
@@ -94,7 +94,8 @@ def lambda_handler(event, context):
             
             with open(path_to_tmp + "inersection_file_" + str(idx) + ".json", 'w') as f:
                 json.dump(json_file, f)
-                        
+            
+            
             gdal_warp_kwargs_target_area = {
                 'format': 'GTiff',
                 'cutlineDSName' : json.dumps(json_file),
@@ -168,8 +169,8 @@ def lambda_handler(event, context):
     
     save_arrays_to_tif(ldn_map_save_path, my_array,my_array_tif)
     
-
     object_name = project_id + "/" + "cropped_ldn_map.tif"
+    
     # Upload the file
     try:
         response = s3.upload_file(ldn_map_save_path, target_bucket, object_name)
