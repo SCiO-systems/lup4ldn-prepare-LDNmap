@@ -3,13 +3,17 @@ import numpy as np
 import os
 import sys
 import requests
+# import numpy.ma as ma
+# import copy
 import json
 import boto3
 from botocore.exceptions import ClientError
+# import geopandas as gpd
 import logging
 
 s3 = boto3.client('s3')
 
+#%%
 
 def lambda_handler(event, context):
 
@@ -25,25 +29,30 @@ def lambda_handler(event, context):
             roi_shape = json.loads(roi_shape.text) #.replace("'",'"')
         land_degradation_url = json_file["land_degradation"]
     except Exception as e:
+        print(e)
         print("Input JSON field have an error.")
-        raise(e)
     
 
+    #for local
+    # path_to_tmp = "/home/christos/Desktop/"
     #for aws
     path_to_tmp = "/tmp/"
 
     def get_bucket_from_URL(url):
         part1 = url.split(".s3.")[0]
         part2 = part1.split("https://")[1]
+        # vsis3_url = (part1+part2).replace("https:/","/vsis3" )
         return part2
     
     def get_object_from_URL(url):
         part2 = url.split(".amazonaws.com/")[1]
+        # vsis3_url = (part1+part2).replace("https:/","/vsis3" )
         return part2
 
     def get_server_from_URL(url):
         part1 = url.split(".s3.")[1]
         part2 = part1.split(".amazonaws.com")[0]
+        # vsis3_url = (part1+part2).replace("https:/","/vsis3" )
         return part2
     
     target_bucket = get_bucket_from_URL(land_degradation_url)
@@ -95,6 +104,7 @@ def lambda_handler(event, context):
             with open(path_to_tmp + "inersection_file_" + str(idx) + ".json", 'w') as f:
                 json.dump(json_file, f)
             
+            # json_file = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[8.470458984375,33.813384329112786],[8.633880615234375,33.813384329112786],[8.633880615234375,33.696922692957685],[8.470458984375,33.696922692957685],[8.470458984375,33.813384329112786]]]}},{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[8.719024658203125,33.744896643156231],[8.839874267578125,33.744896643156231],[8.839874267578125,33.605469612271882],[8.719024658203125,33.605469612271882],[8.719024658203125,33.744896643156231]]]}}]}
             
             gdal_warp_kwargs_target_area = {
                 'format': 'GTiff',
@@ -162,6 +172,7 @@ def lambda_handler(event, context):
             DataSet.GetRasterBand(i).WriteArray(image)
             DataSet.GetRasterBand(i).SetNoDataValue(ndval)
         DataSet = None
+        # print(output_tif_path, " has been saved")
         return
     
     
@@ -169,11 +180,13 @@ def lambda_handler(event, context):
     
     save_arrays_to_tif(ldn_map_save_path, my_array,my_array_tif)
     
+    # target_bucket = "lup4ldn-prod"
     object_name = project_id + "/" + "cropped_ldn_map.tif"
     
     # Upload the file
     try:
         response = s3.upload_file(ldn_map_save_path, target_bucket, object_name)
+#         print("Uploaded file: " + file)
     except ClientError as e:
         logging.error(e)
         return {
@@ -181,6 +194,7 @@ def lambda_handler(event, context):
             "body": json.dumps(e)
                 }
 
+    # s3_lambda_path = "https://lup4ldn-prod.s3.us-east-2.amazonaws.com/"
     s3_lambda_path = "https://" + target_bucket + ".s3.us-east-2.amazonaws.com/"    
     
     my_output = {
